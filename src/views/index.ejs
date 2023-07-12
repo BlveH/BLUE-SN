@@ -3,22 +3,46 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BLUE SN</title>
-    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
     <script src="socket.io/socket.io.js"></script>
+    <link rel="stylesheet" href="/layout.css">
+    <script src="/index.js"></script>
 </head>
-<script>
-    let socket = io("http://localhost:3000")
-    socket.on("server-send-data",(data)=>{
-        $('#data').append(data)
-    })
-    $(document).ready(()=>{
-       $("#sendData").click(()=>{
-        socket.emit("click-send-data", "Hi");
-       })
-    })
-</script>
+
 <body>
-    <button id="sendData">Click me</button>
-    <h2 id="data"></h2>
+    <div id="wrapper">
+        <div id="login">
+                <h3>What's your name:</h3>
+                <input type="text" id="txtUsername">
+                <input type="button" value="Register" id="btnRegister">
+        </div>
+
+        <div id="chat">
+            <div id="video">
+                <video id="localVideo" controls></video>
+            </div>
+            <div id="left">
+                <div id="boxTitle">Users online</div>
+                <div id="boxContent">
+                    <div id="UserOnline"></div>
+                </div>
+            </div>
+
+            <div id="right">
+                <div id="sayHi">
+                    Hello <span id="currentUser"></span>
+                    <input type="button" id="btnLogout" value="Logout">
+                </div>
+
+                <div id="listMessage">
+                </div>
+
+                    <div id="noti">
+                    </div>
+
+                <input type="text" id="txtMessage">
+                <input type="button" id="btnSendMessage" value="SendMessage">
+            </div>
+        </div>
+    </div>
 </body>
 </html>
