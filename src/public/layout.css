@@ -51,5 +51,12 @@
 }
 
 #localVideo {
-    width: 300px;
+    width : 500px;
+    height: 200px;
+}
+
+#friendVideo {
+    width : 500px;
+    height: 200px;
+
 }

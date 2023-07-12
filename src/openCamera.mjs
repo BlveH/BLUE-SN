@@ -1,16 +1,33 @@
-const openCamera = async () => {
-  const video = document.getElementById("localVideo");
+import Peer from "simple-peer";
+import playVideo from "./playVideo.mjs";
 
+const openCamera = async () => {
   try {
     const stream = await navigator.mediaDevices.getUserMedia({
       audio: true,
       video: true,
     });
-    video.srcObject = stream;
+    playVideo(stream, "localVideo");
+    const peer = new Peer({
+      initiator: location.hash === "#1",
+      trickle: false,
+      stream: stream,
+    });
 
-    video.onloadedmetadata = () => {
-      video.play();
-    };
+    peer.on("signal", (token) => {
+      document.getElementById("txtMySignal").value = JSON.stringify(token);
+    });
+
+    document.getElementById("btnConnect").addEventListener("click", () => {
+      const friendSignal = JSON.parse(
+        document.getElementById("txtFriendSignal").value
+      );
+      peer.signal(friendSignal);
+    });
+
+    peer.on("stream", (friendStream) => {
+      playVideo(friendStream, "friendVideo");
+    });
   } catch (err) {
     console.log(err);
   }
