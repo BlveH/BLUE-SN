@@ -1,3 +1,5 @@
+import openCamera from "./openCamera.mjs";
+
 const socket = io("http://localhost:3000");
 socket.on("server-send-data", (data) => {
   document.getElementById("data").innerHTML += data;
@@ -49,21 +51,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     );
   });
 
-  const video = document.getElementById("localVideo");
-
-  try {
-    const stream = await navigator.mediaDevices.getUserMedia({
-      audio: true,
-      video: true,
-    });
-    video.srcObject = stream;
-
-    video.onloadedmetadata = () => {
-      video.play();
-    };
-  } catch (err) {
-    console.log(err);
-  }
+  openCamera();
 
   document.getElementById("btnLogout").addEventListener("click", () => {
     socket.emit("client-logout");

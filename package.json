@@ -8,10 +8,15 @@
     "ejs": "^3.1.9",
     "express": "^4.18.2",
     "nodemon": "^3.0.1",
-    "socket.io": "^4.7.1"
+    "socket.io": "^4.7.1",
+    "webpack": "^5.88.1",
+    "webpack-cli": "^5.1.4"
   },
-  "type": "module",
+  "type": "commonjs",
   "scripts": {
-    "start": "nodemon server.js"
+    "start": "nodemon server.mjs"
+  },
+  "devDependencies": {
+    "simple-peer": "^9.11.1"
   }
 }

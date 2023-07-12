@@ -1,4 +1,4 @@
-import app from "./src/app.js";
+import app from "./src/app.mjs";
 import "dotenv/config";
 import * as Http from "http";
 import { Server } from "socket.io";
