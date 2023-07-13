@@ -3,9 +3,8 @@ import Peer from "peerjs";
 import { uid } from "uid";
 import playVideo from "./playVideo.mjs";
 import io from "socket.io-client";
-import "dotenv/config";
 
-const socket = io(process.env.SOCKET_SERVER_URL);
+const socket = io("https://your-socket-server-url.com");
 
 const getUid = () => {
   const id = uid(10);
