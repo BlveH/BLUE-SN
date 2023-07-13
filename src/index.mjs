@@ -10,29 +10,50 @@ const getUid = () => {
 
   return id;
 };
-const peer = Peer(getUid(), {
-  host: "blue-sn-b5bea4ea9ff8.herokuapp.com/",
+
+let customConfig;
+
+const xhr = new XMLHttpRequest();
+xhr.open(
+  "GET",
+  "https://service.xirsys.com/ice?ident=BLUEZoNeH&secret=8fbc6b68-211a-11ee-a78d-0242ac130003&domain=global.xirsys.net&application=default&room=default&secure=1",
+  false
+);
+
+xhr.onreadystatechange = function () {
+  if (xhr.readyState === 4 && xhr.status === 200) {
+    const data = JSON.parse(xhr.responseText);
+    const customConfig = data.d;
+    console.log("" + customConfig);
+  }
+};
+
+xhr.send();
+
+const peer = new Peer(getUid(), {
+  host: "blue-sn-b5bea4ea9ff8.herokuapp.com",
   port: 443,
   secure: true,
   key: "peerjs",
+  config: customConfig,
 });
 
-document.getElementById("btnConnect").addEventListener("click", function () {
+document.getElementById("btnConnect").addEventListener("click", () => {
   const friendId = document.getElementById("txtFriendId").value;
-  openCamera(function (stream) {
+  openCamera((stream) => {
     playVideo(stream, "localVideo");
     const call = peer.call(friendId, stream);
-    call.on("stream", function (remoteStream) {
+    call.on("stream", (remoteStream) => {
       playVideo(remoteStream, "friendVideo");
     });
   });
 });
 
-peer.on("call", function (call) {
-  openCamera(function (stream) {
+peer.on("call", (call) => {
+  openCamera((stream) => {
     playVideo(stream, "localVideo");
     call.answer(stream);
-    call.on("stream", function (remoteStream) {
+    call.on("stream", (remoteStream) => {
       playVideo(remoteStream, "friendVideo");
     });
   });
