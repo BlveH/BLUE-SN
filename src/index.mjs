@@ -30,12 +30,14 @@ xhr.onreadystatechange = function () {
 
 xhr.send();
 
-const peer = new Peer(getUid(), {
-  host: "blue-sn-b5bea4ea9ff8.herokuapp.com",
-  port: 443,
-  secure: true,
-  key: "peerjs",
-  config: customConfig,
+const peer = new Peer(getUid());
+
+peer.on("open", function () {
+  console.log("PeerJS connection open");
+});
+
+peer.on("error", function (err) {
+  console.log("PeerJS error: " + err);
 });
 
 document.getElementById("btnConnect").addEventListener("click", () => {
