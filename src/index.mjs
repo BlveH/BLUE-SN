@@ -1,8 +1,9 @@
-import socketFeature from "./socket.mjs";
 import openCamera from "./openCamera.mjs";
 import Peer from "peerjs";
 import { uid } from "uid";
 import playVideo from "./playVideo.mjs";
+
+const socket = io("http://localhost:3000");
 
 const getUid = () => {
   const id = uid(10);
@@ -11,45 +12,104 @@ const getUid = () => {
   return id;
 };
 
-let customConfig;
+const peerID = getUid();
 
-const xhr = new XMLHttpRequest();
-xhr.open(
-  "GET",
-  "https://service.xirsys.com/ice?ident=BLUEZoNeH&secret=8fbc6b68-211a-11ee-a78d-0242ac130003&domain=global.xirsys.net&application=default&room=default&secure=1",
-  false
-);
+const peer = new Peer(peerID);
+socket.emit("new-peerId", peerID);
 
-xhr.onreadystatechange = function () {
-  if (xhr.readyState === 4 && xhr.status === 200) {
-    const data = JSON.parse(xhr.responseText);
-    const customConfig = data.d;
-    console.log("" + customConfig);
-  }
-};
-
-xhr.send();
-
-const peer = new Peer(getUid());
-
-peer.on("open", function () {
-  console.log("PeerJS connection open");
+socket.on("server-send-success", (data) => {
+  document.getElementById("login").style.display = "none";
+  document.getElementById("chat").style.display = "block";
 });
 
-peer.on("error", function (err) {
-  console.log("PeerJS error: " + err);
+socket.on("server-send-fail", () => {
+  alert("User has existed");
 });
 
-document.getElementById("btnConnect").addEventListener("click", () => {
-  const friendId = document.getElementById("txtFriendId").value;
-  openCamera((stream) => {
-    playVideo(stream, "localVideo");
-    const call = peer.call(friendId, stream);
-    call.on("stream", (remoteStream) => {
-      playVideo(remoteStream, "friendVideo");
+document.addEventListener("DOMContentLoaded", () => {
+  document.getElementById("login").style.display = "block";
+  document.getElementById("chat").style.display = "none";
+
+  document.getElementById("btnRegister").addEventListener("click", () => {
+    socket.emit(
+      "client-send-data",
+      document.getElementById("txtUsername").value
+    );
+  });
+
+  socket.on("users-online", (userList) => {
+    let listUser = document.getElementById("list-user");
+    listUser.innerHTML = "";
+    userList.forEach((element) => {
+      let li = document.createElement("li");
+      li.textContent = element;
+      li.id = element;
+      listUser.appendChild(li);
     });
   });
+
+  socket.on("new-user-connect", (userList) => {
+    let listUser = document.getElementById("list-user");
+    userList.forEach((element) => {
+      if (!document.getElementById(element)) {
+        let li = document.createElement("li");
+        li.textContent = element;
+        li.id = element;
+
+        listUser.appendChild(li);
+      }
+    });
+  });
+
+  socket.on("user-disconnect", (peerId) => {
+    const element = document.getElementById(peerId);
+    if (element) {
+      element.parentNode.removeChild(element);
+    }
+  });
+  document.getElementById("txtMessage").addEventListener("focusin", () => {
+    socket.emit("user-focus-in");
+  });
+
+  document.getElementById("txtMessage").addEventListener("focusout", () => {
+    socket.emit("user-focus-out");
+  });
+  socket.on("user-is-writing", (data) => {
+    document.getElementById("noti").innerHTML = data;
+  });
+
+  socket.on("user-stop-writing", () => {
+    document.getElementById("noti").innerHTML = "";
+  });
+  document.getElementById("btnSendMessage").addEventListener("click", () => {
+    const messageInput = document.getElementById("txtMessage");
+    const message = messageInput.value;
+
+    socket.emit("user-send-message", message);
+
+    messageInput.value = "";
+  });
+
+  socket.on("server-send-message", (data) => {
+    const messageDiv = document.createElement("div");
+    messageDiv.classList.add("message");
+    messageDiv.innerHTML = data.user + ":" + data.content;
+    document.getElementById("listMessage").appendChild(messageDiv);
+  });
 });
+
+document
+  .getElementById("list-user")
+  .addEventListener("click", function (event) {
+    const peerId = event.target.textContent;
+    openCamera((stream) => {
+      playVideo(stream, "localVideo");
+      const call = peer.call(peerId, stream);
+      call.on("stream", (remoteStream) => {
+        playVideo(remoteStream, "friendVideo");
+      });
+    });
+  });
 
 peer.on("call", (call) => {
   openCamera((stream) => {
@@ -61,4 +121,16 @@ peer.on("call", (call) => {
   });
 });
 
-// socketFeature();
+const listUser = document.getElementById("list-user");
+
+listUser.addEventListener("mouseover", function (event) {
+  if (event.target.tagName === "LI") {
+    event.target.style.cursor = "pointer";
+  }
+});
+
+listUser.addEventListener("mouseout", function (event) {
+  if (event.target.tagName === "LI") {
+    event.target.style.cursor = "default";
+  }
+});

@@ -7,45 +7,51 @@ const PORT = process.env.PORT || 3000;
 
 const server = Http.createServer(app);
 const io = new Server(server);
-const listUsers = [];
 
-// io.on("connection", (socket) => {
-//   console.log("Someone is connecting", socket.id);
-//   socket.on("client-send-data", (data) => {
-//     if (listUsers.indexOf(data) >= 0) {
-//       socket.emit("server-send-fail");
-//     } else {
-//       listUsers.push(data);
-//       socket.Username = data;
-//       socket.emit("server-send-success", data);
-//       io.sockets.emit("server-send-listUser", listUsers);
-//     }
-//   });
+const userList = [];
+const userListId = [];
 
-//   socket.on("user-send-message", (data) => {
-//     io.sockets.emit("server-send-message", {
-//       user: socket.Username,
-//       content: data,
-//     });
-//   });
+io.on("connection", (socket) => {
+  socket.on("client-send-data", (data) => {
+    if (userList.indexOf(data) >= 0) {
+      socket.emit("server-send-fail");
+    } else {
+      userList.push(data);
+      socket.Username = data;
+      socket.emit("server-send-success", data);
+      io.sockets.emit("server-send-listUser", userList);
+    }
+  });
 
-//   socket.on("user-focus-in", () => {
-//     socket.broadcast.emit("user-is-writing", socket.Username + "...");
-//   });
+  socket.emit("users-online", userListId);
 
-//   socket.on("user-focus-out", () => {
-//     socket.broadcast.emit("user-stop-writing");
-//   });
+  socket.on("new-peerId", (peerId) => {
+    socket.peerId = peerId;
+    userListId.push(peerId);
+    io.sockets.emit("new-user-connect", userListId);
+  });
 
-//   socket.on("client-logout", () => {
-//     listUsers.splice(listUsers.indexOf(socket.Username), 1);
-//     socket.broadcast.emit("server-send-listUser", listUsers);
-//   });
+  socket.on("disconnect", () => {
+    const index = userList.indexOf(socket.peerId);
+    userList.splice(index, 1);
+    io.sockets.emit("user-disconnect", socket.peerId);
+  });
 
-//   socket.on("disconnect", () => {
-//     console.log(socket.id, "is off");
-//   });
-// });
+  socket.on("user-focus-in", () => {
+    socket.broadcast.emit("user-is-writing", socket.peerId + "...");
+  });
+
+  socket.on("user-focus-out", () => {
+    socket.broadcast.emit("user-stop-writing");
+  });
+
+  socket.on("user-send-message", (data) => {
+    io.sockets.emit("server-send-message", {
+      user: socket.peerId,
+      content: data,
+    });
+  });
+});
 
 server.listen(PORT, () => {
   console.log(`App is running on ${PORT}`);
