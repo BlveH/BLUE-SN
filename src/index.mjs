@@ -3,6 +3,7 @@ import Peer from "peerjs";
 import { uid } from "uid";
 import playVideo from "./playVideo.mjs";
 import io from "socket.io-client";
+import "dotenv/config";
 
 const socket = io(process.env.SOCKET_SERVER_URL);
 
