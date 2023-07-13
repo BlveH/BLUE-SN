@@ -1,12 +1,10 @@
-import peerFeature from "./peerFeature.mjs";
-
-const openCamera = async () => {
+const openCamera = async (obj) => {
   try {
     const stream = await navigator.mediaDevices.getUserMedia({
       audio: true,
       video: true,
     });
-    peerFeature(stream);
+    obj(stream);
   } catch (err) {
     console.log(err);
   }
