@@ -8,20 +8,20 @@ const PORT = process.env.PORT || 3000;
 const server = Http.createServer(app);
 const io = new Server(server);
 
-const userList = [];
+// const userList = [];
 const userListId = [];
 
 io.on("connection", (socket) => {
-  socket.on("client-send-data", (data) => {
-    if (userList.indexOf(data) >= 0) {
-      socket.emit("server-send-fail");
-    } else {
-      userList.push(data);
-      socket.Username = data;
-      socket.emit("server-send-success", data);
-      io.sockets.emit("server-send-listUser", userList);
-    }
-  });
+  // socket.on("client-send-data", (data) => {
+  //   if (userList.indexOf(data) >= 0) {
+  //     socket.emit("server-send-fail");
+  //   } else {
+  //     userList.push(data);
+  //     socket.Username = data;
+  //     socket.emit("server-send-success", data);
+  //     io.sockets.emit("server-send-listUser", userList);
+  //   }
+  // });
 
   socket.emit("users-online", userListId);
 
@@ -32,8 +32,8 @@ io.on("connection", (socket) => {
   });
 
   socket.on("disconnect", () => {
-    const index = userList.indexOf(socket.peerId);
-    userList.splice(index, 1);
+    const index = userListId.indexOf(socket.peerId);
+    userListId.splice(index, 1);
     io.sockets.emit("user-disconnect", socket.peerId);
   });
 

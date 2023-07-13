@@ -17,25 +17,25 @@ const peerID = getUid();
 const peer = new Peer(peerID);
 socket.emit("new-peerId", peerID);
 
-socket.on("server-send-success", (data) => {
-  document.getElementById("login").style.display = "none";
-  document.getElementById("chat").style.display = "block";
-});
+// socket.on("server-send-success", (data) => {
+//   document.getElementById("login").style.display = "none";
+//   document.getElementById("chat").style.display = "block";
+// });
 
-socket.on("server-send-fail", () => {
-  alert("User has existed");
-});
+// socket.on("server-send-fail", () => {
+//   alert("User has existed");
+// });
 
 document.addEventListener("DOMContentLoaded", () => {
-  document.getElementById("login").style.display = "block";
-  document.getElementById("chat").style.display = "none";
+  //   document.getElementById("login").style.display = "block";
+  //   document.getElementById("chat").style.display = "none";
 
-  document.getElementById("btnRegister").addEventListener("click", () => {
-    socket.emit(
-      "client-send-data",
-      document.getElementById("txtUsername").value
-    );
-  });
+  //   document.getElementById("btnRegister").addEventListener("click", () => {
+  //     socket.emit(
+  //       "client-send-data",
+  //       document.getElementById("txtUsername").value
+  //     );
+  //   });
 
   socket.on("users-online", (userList) => {
     let listUser = document.getElementById("list-user");
