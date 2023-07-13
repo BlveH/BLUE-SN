@@ -1,2 +1,4 @@
 import socketFeature from "./socket.mjs";
-socketFeature();
+import openCamera from "./openCamera.mjs";
+openCamera();
+// socketFeature();

@@ -364,7 +364,7 @@ eval("/* (ignored) */\n\n//# sourceURL=webpack://BLUE-SN/util_(ignored)?");
 /***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var _socket_mjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./socket.mjs */ \"./src/socket.mjs\");\n\r\n(0,_socket_mjs__WEBPACK_IMPORTED_MODULE_0__[\"default\"])();\r\n\n\n//# sourceURL=webpack://BLUE-SN/./src/index.mjs?");
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var _socket_mjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./socket.mjs */ \"./src/socket.mjs\");\n/* harmony import */ var _openCamera_mjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./openCamera.mjs */ \"./src/openCamera.mjs\");\n\r\n\r\n(0,_openCamera_mjs__WEBPACK_IMPORTED_MODULE_1__[\"default\"])();\r\n// socketFeature();\r\n\n\n//# sourceURL=webpack://BLUE-SN/./src/index.mjs?");
 
 /***/ }),
 
