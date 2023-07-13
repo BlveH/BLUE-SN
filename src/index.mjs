@@ -1,6 +1,6 @@
 import openCamera from "./openCamera.mjs";
-import Peer from "peerjs/dist/peerjs.min.js";
-import { uid } from "uid/dist/esm-browser/index.js";
+import Peer from "peerjs";
+import { uid } from "uid";
 import playVideo from "./playVideo.mjs";
 import io from "socket.io-client";
 import "dotenv/config";
