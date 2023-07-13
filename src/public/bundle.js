@@ -256,7 +256,7 @@ eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var _ope
 /***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (__WEBPACK_DEFAULT_EXPORT__)\n/* harmony export */ });\nconst openCamera = async (obj) => {\r\n  try {\r\n    const stream = await navigator.mediaDevices.getUserMedia({\r\n      audio: true,\r\n      video: true,\r\n    });\r\n    obj(stream);\r\n  } catch (err) {\r\n    console.log(err);\r\n  }\r\n};\r\n\r\n/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (openCamera);\r\n\n\n//# sourceURL=webpack://BLUE-SN/./src/openCamera.mjs?");
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (__WEBPACK_DEFAULT_EXPORT__)\n/* harmony export */ });\nconst openCamera = async (obj) => {\r\n  try {\r\n    const stream = await navigator.mediaDevices.getUserMedia({\r\n      audio: {\r\n        echoCancellation: true,\r\n      },\r\n      video: {\r\n        facingMode: \"user\",\r\n      },\r\n    });\r\n    // Lấy track âm thanh từ stream\r\n    const audioTrack = stream.getAudioTracks()[0];\r\n    if (audioTrack) {\r\n      // Bật chế độ hủy tiếng vọng\r\n      audioTrack.echoCancellation = true;\r\n    }\r\n    obj(stream);\r\n  } catch (err) {\r\n    console.log(err);\r\n  }\r\n};\r\n\r\n/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (openCamera);\r\n\n\n//# sourceURL=webpack://BLUE-SN/./src/openCamera.mjs?");
 
 /***/ }),
 
@@ -267,7 +267,7 @@ eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpac
 /***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (__WEBPACK_DEFAULT_EXPORT__)\n/* harmony export */ });\nconst playVideo = (stream, idVideo) => {\r\n  const video = document.getElementById(idVideo);\r\n  video.srcObject = stream;\r\n\r\n  video.onloadedmetadata = () => {\r\n    video.play();\r\n  };\r\n};\r\n\r\n/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (playVideo);\r\n\n\n//# sourceURL=webpack://BLUE-SN/./src/playVideo.mjs?");
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (__WEBPACK_DEFAULT_EXPORT__)\n/* harmony export */ });\nconst playVideo = (stream, idVideo) => {\r\n  const video = document.getElementById(idVideo);\r\n  video.srcObject = stream;\r\n\r\n  // Lấy track video từ stream\r\n  video.onloadedmetadata = () => {\r\n    video.style.transform = \"scaleX(-1)\";\r\n    video.play();\r\n  };\r\n};\r\n\r\n/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (playVideo);\r\n\n\n//# sourceURL=webpack://BLUE-SN/./src/playVideo.mjs?");
 
 /***/ })
 
