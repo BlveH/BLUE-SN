@@ -4,7 +4,7 @@ import { uid } from "uid";
 import playVideo from "./playVideo.mjs";
 import io from "socket.io-client";
 
-const socket = io(process.env.PORT || 3000);
+const socket = io(process.env.SOCKET_SERVER_URL);
 
 const getUid = () => {
   const id = uid(10);
