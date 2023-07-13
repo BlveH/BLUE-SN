@@ -26,6 +26,28 @@ socket.emit("new-peerId", peerID);
 //   alert("User has existed");
 // });
 
+document
+  .getElementById("list-user")
+  .addEventListener("click", function (event) {
+    const peerId = event.target.textContent;
+    openCamera((stream) => {
+      playVideo(stream, "localVideo");
+      const call = peer.call(peerId, stream);
+      call.on("stream", (remoteStream) => {
+        playVideo(remoteStream, "friendVideo");
+      });
+    });
+  });
+
+peer.on("call", (call) => {
+  openCamera((stream) => {
+    playVideo(stream, "localVideo");
+    call.answer(stream);
+    call.on("stream", (remoteStream) => {
+      playVideo(remoteStream, "friendVideo");
+    });
+  });
+});
 document.addEventListener("DOMContentLoaded", () => {
   //   document.getElementById("login").style.display = "block";
   //   document.getElementById("chat").style.display = "none";
@@ -95,29 +117,6 @@ document.addEventListener("DOMContentLoaded", () => {
     messageDiv.classList.add("message");
     messageDiv.innerHTML = data.user + ":" + data.content;
     document.getElementById("listMessage").appendChild(messageDiv);
-  });
-});
-
-document
-  .getElementById("list-user")
-  .addEventListener("click", function (event) {
-    const peerId = event.target.textContent;
-    openCamera((stream) => {
-      playVideo(stream, "localVideo");
-      const call = peer.call(peerId, stream);
-      call.on("stream", (remoteStream) => {
-        playVideo(remoteStream, "friendVideo");
-      });
-    });
-  });
-
-peer.on("call", (call) => {
-  openCamera((stream) => {
-    playVideo(stream, "localVideo");
-    call.answer(stream);
-    call.on("stream", (remoteStream) => {
-      playVideo(remoteStream, "friendVideo");
-    });
   });
 });
 
