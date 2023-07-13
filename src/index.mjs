@@ -1,5 +1,5 @@
 import openCamera from "./openCamera.mjs";
-import Peer from "peerjs";
+import Peer from "peerjs/dist/peerjs.min.js";
 import { uid } from "uid/dist/esm-browser/index.js";
 import playVideo from "./playVideo.mjs";
 import io from "socket.io-client";
