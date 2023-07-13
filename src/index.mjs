@@ -4,7 +4,7 @@ import { uid } from "uid";
 import playVideo from "./playVideo.mjs";
 import io from "socket.io-client";
 
-const socket = io("https://your-socket-server-url.com");
+const socket = io("https://blue-sn.onrender.com");
 
 const getUid = () => {
   const id = uid(10);
