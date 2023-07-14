@@ -16,7 +16,7 @@ if (!SOCKET_SERVER_URL) {
 // Continue with the code only if the SOCKET_SERVER_URL is defined
 if (SOCKET_SERVER_URL) {
   const socket = io(SOCKET_SERVER_URL);
-
+}
 socket.on("connect_error", (error) => {
   console.error("Lỗi kết nối Socket.io:", error);
   alert("Lỗi kết nối đến máy chủ Socket.io");
