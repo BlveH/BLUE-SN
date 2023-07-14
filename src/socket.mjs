@@ -16,109 +16,111 @@ if (!SOCKET_SERVER_URL) {
 // Continue with the code only if the SOCKET_SERVER_URL is defined
 if (SOCKET_SERVER_URL) {
   const socket = io(SOCKET_SERVER_URL);
-}
-socket.on("connect_error", (error) => {
-  console.error("Lỗi kết nối Socket.io:", error);
-  alert("Lỗi kết nối đến máy chủ Socket.io");
-});
 
-socket.on("connect_timeout", () => {
-  console.error("Hết thời gian kết nối Socket.io");
-  alert("Hết thời gian kết nối đến máy chủ Socket.io");
-});
+  socket.on("connect_error", (error) => {
+    console.error("Lỗi kết nối Socket.io:", error);
+    alert("Lỗi kết nối đến máy chủ Socket.io");
+  });
 
-socket.on("error", (error) => {
-  console.error("Lỗi Socket.io:", error);
-  alert("Lỗi kết nối đến máy chủ Socket.io");
-});
+  socket.on("connect_timeout", () => {
+    console.error("Hết thời gian kết nối Socket.io");
+    alert("Hết thời gian kết nối đến máy chủ Socket.io");
+  });
 
-socket.on("server-send-success", (data) => {
-  document.getElementById("login").style.display = "none";
-  document.getElementById("chat").style.display = "block";
-  console.log("", data);
-  const peerID = data.username;
-  const peer = new Peer(peerID);
-  socket.emit("new-peerId", peerID);
-  document
-    .getElementById("list-user")
-    .addEventListener("click", function (event) {
-      const peerId = event.target.textContent;
+  socket.on("error", (error) => {
+    console.error("Lỗi Socket.io:", error);
+    alert("Lỗi kết nối đến máy chủ Socket.io");
+  });
+
+  socket.on("server-send-success", (data) => {
+    document.getElementById("login").style.display = "none";
+    document.getElementById("chat").style.display = "block";
+    console.log("", data);
+    const peerID = data.username;
+    const peer = new Peer(peerID);
+    socket.emit("new-peerId", peerID);
+    document
+      .getElementById("list-user")
+      .addEventListener("click", function (event) {
+        const peerId = event.target.textContent;
+        openCamera((stream) => {
+          playVideo(stream, "localVideo");
+          const call = peer.call(peerId, stream);
+          call.on("stream", (remoteStream) => {
+            playVideo(remoteStream, "friendVideo");
+          });
+        });
+      });
+
+    peer.on("call", (call) => {
       openCamera((stream) => {
         playVideo(stream, "localVideo");
-        const call = peer.call(peerId, stream);
+        call.answer(stream);
         call.on("stream", (remoteStream) => {
           playVideo(remoteStream, "friendVideo");
         });
       });
     });
 
-  peer.on("call", (call) => {
-    openCamera((stream) => {
-      playVideo(stream, "localVideo");
-      call.answer(stream);
-      call.on("stream", (remoteStream) => {
-        playVideo(remoteStream, "friendVideo");
-      });
-    });
-  });
-  socket.on("users-online", (userList) => {
-    console.log(userList);
-    let listUser = document.getElementById("list-user");
-    listUser.innerHTML = "";
-    userList.forEach((element) => {
-      let li = document.createElement("li");
-      li.textContent = element;
-      li.id = element;
-      listUser.appendChild(li);
-    });
-  });
-
-  socket.on("new-user-connect", (userList) => {
-    console.log(userList);
-
-    let listUser = document.getElementById("list-user");
-    userList.forEach((element) => {
-      if (!document.getElementById(element)) {
+    socket.on("users-online", (userList) => {
+      console.log(userList);
+      let listUser = document.getElementById("list-user");
+      listUser.innerHTML = "";
+      userList.forEach((element) => {
         let li = document.createElement("li");
         li.textContent = element;
         li.id = element;
-
         listUser.appendChild(li);
+      });
+    });
+
+    socket.on("new-user-connect", (userList) => {
+      console.log(userList);
+
+      let listUser = document.getElementById("list-user");
+      userList.forEach((element) => {
+        if (!document.getElementById(element)) {
+          let li = document.createElement("li");
+          li.textContent = element;
+          li.id = element;
+
+          listUser.appendChild(li);
+        }
+      });
+    });
+
+    socket.on("user-disconnect", (peerId) => {
+      const element = document.getElementById(peerId);
+      if (element) {
+        element.parentNode.removeChild(element);
       }
     });
   });
 
-  socket.on("user-disconnect", (peerId) => {
-    const element = document.getElementById(peerId);
-    if (element) {
-      element.parentNode.removeChild(element);
-    }
+  socket.on("server-send-regist-success", (data) => {
+    alert("Regist success!");
+
+    document.getElementById("txtName").value = "";
+    document.getElementById("txtPass").value = "";
+    document.getElementById("txtVerifyPass").value = "";
   });
-});
 
-socket.on("server-send-regist-success", (data) => {
-  alert("Regist success!");
+  socket.on("server-send-fail", () => {
+    alert("User has existed");
+  });
 
-  document.getElementById("txtName").value = "";
-  document.getElementById("txtPass").value = "";
-  document.getElementById("txtVerifyPass").value = "";
-});
+  socket.on("server-login-fail", () => {
+    alert("User is not existed");
+  });
 
-socket.on("server-send-fail", () => {
-  alert("User has existed");
-});
+  socket.on("server-login-fail-pass", () => {
+    alert("Wrong password!");
+  });
 
-socket.on("server-login-fail", () => {
-  alert("User is not existed");
-});
-
-socket.on("server-login-fail-pass", () => {
-  alert("Wrong password!");
-});
-
-socket.on("server-send-fail-pass", () => {
-  alert("Password is not match");
-});
+  socket.on("server-send-fail-pass", () => {
+    alert("Password is not match");
+  });
+}
 
 document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("login").style.display = "block";
