@@ -4,7 +4,10 @@ import playVideo from "./services/playVideo.mjs";
 import io from "socket.io-client";
 import "dotenv/config";
 
-const socket = io(process.env.SOCKET_SERVER_URL);
+const SOCKET_SERVER_URL =
+  process.env.SOCKET_SERVER_URL || "https://blue-sn.onrender.com";
+
+const socket = io(SOCKET_SERVER_URL);
 
 socket.on("connect_error", (error) => {
   console.error("Lỗi kết nối Socket.io:", error);
