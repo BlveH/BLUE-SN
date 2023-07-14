@@ -1,4 +1,4 @@
-const openCamera = async (obj) => {
+const openCamera = async (callback) => {
   try {
     const stream = await navigator.mediaDevices.getUserMedia({
       audio: {
@@ -14,7 +14,7 @@ const openCamera = async (obj) => {
       // Bật chế độ hủy tiếng vọng
       audioTrack.echoCancellation = true;
     }
-    obj(stream);
+    callback(stream);
   } catch (err) {
     console.log(err);
   }
