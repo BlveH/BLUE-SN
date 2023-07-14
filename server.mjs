@@ -11,7 +11,7 @@ const io = new Server(server);
 
 const userListId = [];
 
-io.on("connection", (socket) => {
+io.on("connection", async (socket) => {
   socket.on("client-register", async (name, password, verifyPassword) => {
     const userFound = await user.findOne({ username: name });
     if (userFound) {
