@@ -23,6 +23,9 @@
     "webpack-cli": "^5.1.4"
   },
   "type": "commonjs",
+  "engines": {
+    "node": ">=NODE_JS_VERSION"
+  },
   "scripts": {
     "start": "nodemon server.mjs",
     "up": "docker-compose up -d",
