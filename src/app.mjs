@@ -9,7 +9,7 @@ connect();
 app.use(express.static("src/public"));
 app.set("view engine", "ejs");
 app.set("views", "./src/views");
-app.use(cors({ origin: true, credentials: true }));
+app.use(cors({ origin: "*" }));
 
 app.get("/", (req, res) => {
   res.render("index");
