@@ -3,11 +3,19 @@ import Peer from "peerjs";
 import playVideo from "./services/playVideo.mjs";
 import io from "socket.io-client";
 
-if (typeof process !== "undefined") {
-  require("dotenv").config();
+// Define the environment variables
+const { SOCKET_SERVER_URL } = process.env;
+
+// Check if the SOCKET_SERVER_URL is defined
+if (!SOCKET_SERVER_URL) {
+  console.error("Missing SOCKET_SERVER_URL environment variable.");
+  // Handle the error accordingly, such as showing an error message or falling back to a default URL.
+  alert("Missing environment variable: SOCKET_SERVER_URL");
 }
 
-const socket = io(process.env.SOCKET_SERVER_URL);
+// Continue with the code only if the SOCKET_SERVER_URL is defined
+if (SOCKET_SERVER_URL) {
+  const socket = io(SOCKET_SERVER_URL);
 
 socket.on("connect_error", (error) => {
   console.error("Lỗi kết nối Socket.io:", error);
