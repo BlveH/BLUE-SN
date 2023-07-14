@@ -5,6 +5,21 @@ import io from "socket.io-client";
 
 const socket = io("https://blue-sn.onrender.com");
 
+socket.on("connect_error", (error) => {
+  console.error("Lỗi kết nối Socket.io:", error);
+  alert("Lỗi kết nối đến máy chủ Socket.io");
+});
+
+socket.on("connect_timeout", () => {
+  console.error("Hết thời gian kết nối Socket.io");
+  alert("Hết thời gian kết nối đến máy chủ Socket.io");
+});
+
+socket.on("error", (error) => {
+  console.error("Lỗi Socket.io:", error);
+  alert("Lỗi kết nối đến máy chủ Socket.io");
+});
+
 socket.on("server-send-success", (data) => {
   document.getElementById("login").style.display = "none";
   document.getElementById("chat").style.display = "block";
