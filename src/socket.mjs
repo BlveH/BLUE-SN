@@ -3,7 +3,7 @@ import Peer from "peerjs";
 import playVideo from "./services/playVideo.mjs";
 import io from "socket.io-client";
 
-const socket = io("http://localhost:3000");
+const socket = io("https://blue-sn.onrender.com");
 
 socket.on("server-send-success", (data) => {
   document.getElementById("login").style.display = "none";
