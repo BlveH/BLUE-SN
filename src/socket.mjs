@@ -2,7 +2,6 @@ import openCamera from "./services/openCamera.mjs";
 import Peer from "peerjs";
 import playVideo from "./services/playVideo.mjs";
 import io from "socket.io-client";
-import "dotenv/config";
 
 const socket = io(process.env.SOCKET_SERVER_URL);
 
