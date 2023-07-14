@@ -2,8 +2,9 @@ import openCamera from "./services/openCamera.mjs";
 import Peer from "peerjs";
 import playVideo from "./services/playVideo.mjs";
 import io from "socket.io-client";
+import "dotenv/config";
 
-const socket = io("https://blue-sn.onrender.com");
+const socket = io(process.env.SOCKET_SERVER_URL);
 
 socket.on("connect_error", (error) => {
   console.error("Lỗi kết nối Socket.io:", error);
