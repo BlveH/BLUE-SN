@@ -1,66 +1,41 @@
 import openCamera from "./services/openCamera.mjs";
 import Peer from "peerjs";
-import { uid } from "uid";
 import playVideo from "./services/playVideo.mjs";
 import io from "socket.io-client";
 
 const socket = io("http://localhost:3000");
 
-const getUid = () => {
-  const id = uid(10);
-  document.getElementById("peerId").innerHTML += id;
+socket.on("server-send-success", (data) => {
+  document.getElementById("login").style.display = "none";
+  document.getElementById("chat").style.display = "block";
+  console.log("", data);
+  const peerID = data.username;
+  const peer = new Peer(peerID);
+  socket.emit("new-peerId", peerID);
+  document
+    .getElementById("list-user")
+    .addEventListener("click", function (event) {
+      const peerId = event.target.textContent;
+      openCamera((stream) => {
+        playVideo(stream, "localVideo");
+        const call = peer.call(peerId, stream);
+        call.on("stream", (remoteStream) => {
+          playVideo(remoteStream, "friendVideo");
+        });
+      });
+    });
 
-  return id;
-};
-
-const peerID = getUid();
-
-const peer = new Peer(peerID);
-socket.emit("new-peerId", peerID);
-
-// socket.on("server-send-success", (data) => {
-//   document.getElementById("login").style.display = "none";
-//   document.getElementById("chat").style.display = "block";
-// });
-
-// socket.on("server-send-fail", () => {
-//   alert("User has existed");
-// });
-
-document
-  .getElementById("list-user")
-  .addEventListener("click", function (event) {
-    const peerId = event.target.textContent;
+  peer.on("call", (call) => {
     openCamera((stream) => {
       playVideo(stream, "localVideo");
-      const call = peer.call(peerId, stream);
+      call.answer(stream);
       call.on("stream", (remoteStream) => {
         playVideo(remoteStream, "friendVideo");
       });
     });
   });
-
-peer.on("call", (call) => {
-  openCamera((stream) => {
-    playVideo(stream, "localVideo");
-    call.answer(stream);
-    call.on("stream", (remoteStream) => {
-      playVideo(remoteStream, "friendVideo");
-    });
-  });
-});
-document.addEventListener("DOMContentLoaded", () => {
-  //   document.getElementById("login").style.display = "block";
-  //   document.getElementById("chat").style.display = "none";
-
-  //   document.getElementById("btnRegister").addEventListener("click", () => {
-  //     socket.emit(
-  //       "client-send-data",
-  //       document.getElementById("txtUsername").value
-  //     );
-  //   });
-
   socket.on("users-online", (userList) => {
+    console.log(userList);
     let listUser = document.getElementById("list-user");
     listUser.innerHTML = "";
     userList.forEach((element) => {
@@ -72,6 +47,8 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   socket.on("new-user-connect", (userList) => {
+    console.log(userList);
+
     let listUser = document.getElementById("list-user");
     userList.forEach((element) => {
       if (!document.getElementById(element)) {
@@ -90,6 +67,53 @@ document.addEventListener("DOMContentLoaded", () => {
       element.parentNode.removeChild(element);
     }
   });
+});
+
+socket.on("server-send-regist-success", (data) => {
+  alert("Regist success!");
+
+  document.getElementById("txtName").value = "";
+  document.getElementById("txtPass").value = "";
+  document.getElementById("txtVerifyPass").value = "";
+});
+
+socket.on("server-send-fail", () => {
+  alert("User has existed");
+});
+
+socket.on("server-login-fail", () => {
+  alert("User is not existed");
+});
+
+socket.on("server-login-fail-pass", () => {
+  alert("Wrong password!");
+});
+
+socket.on("server-send-fail-pass", () => {
+  alert("Password is not match");
+});
+
+document.addEventListener("DOMContentLoaded", () => {
+  document.getElementById("login").style.display = "block";
+  document.getElementById("chat").style.display = "none";
+
+  document.getElementById("btnLogin").addEventListener("click", () => {
+    socket.emit(
+      "client-send-data",
+      document.getElementById("txtUsername").value,
+      document.getElementById("txtPassword").value
+    );
+  });
+
+  document.getElementById("btnRegister").addEventListener("click", () => {
+    socket.emit(
+      "client-register",
+      document.getElementById("txtName").value,
+      document.getElementById("txtPass").value,
+      document.getElementById("txtVerifyPass").value
+    );
+  });
+
   document.getElementById("txtMessage").addEventListener("focusin", () => {
     socket.emit("user-focus-in");
   });

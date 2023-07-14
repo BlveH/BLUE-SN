@@ -8,6 +8,11 @@
     border          : solid 1px black;
 }
 
+#txtPassword {
+    background-color: aqua;
+    border          : solid 1px black;
+}
+
 #left {
     width           : 30%;
     float           : left;
@@ -59,4 +64,16 @@
     width : 500px;
     height: 200px;
 
+}
+
+#login-left {
+    width           : 50%;
+    float           : left;
+    background-color: rgb(248, 210, 152);
+}
+
+#login-right {
+    width           : 50%;
+    float           : right;
+    background-color: aqua
 }
